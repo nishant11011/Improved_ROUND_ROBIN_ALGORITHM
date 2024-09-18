@@ -11,7 +11,7 @@ struct Process {
 };
 
 // Function that implements the priority round-robin scheduling with feedback
-void priorityRoundRobinScheduling(queue<Process>& highPriorityQueue, queue<Process>& lowPriorityQueue, int timeQuantum, int maxWaitingTime) {
+void priorityRoundRobinScheduling(queue<Process>& highPriorityQueue, queue<Process>& lowPriorityQueue, int timeQuantum,   unordered_map<int,int>&lowPriorityMaxWaitingTime) {
     // Two pointers to point at the two queues
     queue<Process>* currentQueue = &highPriorityQueue;
     queue<Process>* nextQueue = &lowPriorityQueue;
@@ -55,7 +55,7 @@ void priorityRoundRobinScheduling(queue<Process>& highPriorityQueue, queue<Proce
             lowPriorityQueue.pop();
 
             // Check if process in low-priority queue should be promoted
-            if (pro.priority == 0 && pro.waitingTime >= maxWaitingTime) {
+            if (pro.priority == 0 && pro.waitingTime >=  lowPriorityMaxWaitingTime[pro.processID]) {
                 pro.priority = 1;
                 highPriorityQueue.push(pro);
                 cout << "Process " << pro.processID << " promoted to high priority due to high waiting time." << endl;
@@ -94,6 +94,7 @@ int main() {
     queue<Process> highPriorityQueue;
     queue<Process> lowPriorityQueue;
 
+    unordered_map<int,int>lowPriorityMaxWaitingTime;
     // Input process details
     for (int i = 0; i < numProcesses; ++i) {
         Process process;
@@ -104,6 +105,10 @@ int main() {
         cin >> process.burstTime;
         cout << "Priority (1 for high priority, 0 for low priority): ";
         cin >> process.priority;
+        int maxWaitingTime = INT_MAX;
+        if(process.priority==0){ // Only for Low Priority Process
+            cin>>maxWaitingTime;
+        }
         process.remainingTime = process.burstTime;
         process.waitingTime = 0;
 
@@ -111,11 +116,12 @@ int main() {
             highPriorityQueue.push(process);
         } else {
             lowPriorityQueue.push(process);
+            lowPriorityMaxWaitingTime[process.processID] = maxWaitingTime;
         }
     }
 
     // Perform priority-based round-robin scheduling with feedback
-    priorityRoundRobinScheduling(highPriorityQueue, lowPriorityQueue, timeQuantum, maxWaitingTime);
+    priorityRoundRobinScheduling(highPriorityQueue, lowPriorityQueue, timeQuantum, lowPriorityMaxWaitingTime);
 
     return 0;
 }
