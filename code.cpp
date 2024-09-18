@@ -37,12 +37,6 @@ void priorityRoundRobinScheduling(queue<Process>& highPriorityQueue, queue<Proce
             pro.waitingTime += executionTime;
             highPriorityQueue.pop();
 
-            // Check if process in low-priority queue should be promoted
-            if (pro.priority == 0 && pro.waitingTime >= maxWaitingTime) {
-                pro.priority = 1;
-                cout << "Process " << pro.processID << " promoted to high priority due to high waiting time." << endl;
-            }
-
             highPriorityQueue.push(pro);
             c++;
         }
