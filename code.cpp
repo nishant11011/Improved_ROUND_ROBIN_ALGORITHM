@@ -73,8 +73,6 @@ void priorityRoundRobinScheduling(queue<Process>& highPriorityQueue, queue<Proce
             cout << "Process " << currentProcess.processID<< endl;
         }
 
-        // Swapping to give chance to the other queue to avoid starvation
-        swap(currentQueue, nextQueue);
     }
 }
 
